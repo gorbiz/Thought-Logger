@@ -7,7 +7,7 @@ let tray = null
 function createWindow() {
   win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 200,
     frame: false,
     transparent: true,
     alwaysOnTop: true

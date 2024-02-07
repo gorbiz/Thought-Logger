@@ -1,3 +1,4 @@
+# PS. This one was better in some ways: https://github.com/gorbiz/thought-logger-original
 
 # start script example
 

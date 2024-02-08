@@ -1,3 +1,4 @@
+const path = require('path')
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 let win
 let tray = null
@@ -13,9 +14,10 @@ function createWindow() {
     frame: false,
     transparent: true,
     alwaysOnTop: true,
+    webPreferences: { preload: path.join(__dirname, 'preload.js') }
   })
 
-  win.loadFile('index.html') // Load your HTML file
+  win.loadFile('index.html')
   // win.loadURL('https://yourapp.com') // TODO probably (share code with PWA / web app)
 
   win.on('close', (event) => {
@@ -26,20 +28,13 @@ function createWindow() {
     return false
   })
 
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
-  win.webContents.on('did-finish-load', () => {
-    console.log('1221')
-    win.webContents.executeJavaScript(`
-      document.addEventListener('keydown', (event) => {
-        console.log(1, event.key, event.key === 'Escape')
-        if (event.key === 'Escape') {
-          console.log(2)
-          require('electron').ipcRenderer.send('hide-window')
-        }
-      })
-    `)
-  })
+  // NOTE how to inject javascript that we don't want to be in the HTML file (& the web / PWA version)
+  // ...but then we put it in preload.js?? 
+  // win.webContents.on('did-finish-load', () => {
+  //   win.webContents.executeJavaScript()
+  // })
 }
 
 ipcMain.on('hide-window', () => {
@@ -49,20 +44,22 @@ ipcMain.on('hide-window', () => {
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
+  console.debug('Another instance is running, quitting.')
   app.quit()
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (win) {
-      if (win.isMinimized()) win.restore()
-      win.focus()
-    }
+    console.debug('second-instance detected, focusing window...')
+    if (!win) return
+    // if (win.isMinimized()) win.restore() // no need?
+    // win.focus() // no need?
+    win.show()
+    // TODO select the text in the input field (that might have been left since before)
   })
 
   app.on('ready', () => {
     createWindow()
-
-    tray = new Tray('/home/gorbiz/code/logger/thought-app/icon.png') // Add your own icon path, not working?
+    
+    tray = new Tray(path.join(__dirname, 'icon.png'))    
     const contextMenu = Menu.buildFromTemplate([
       { label: 'Show', click: () => win.show() },
       { label: 'Exit', click: () => {

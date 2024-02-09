@@ -1,5 +1,8 @@
 # PS. This one was better in some ways: https://github.com/gorbiz/thought-logger-original
 
+# dev tools
+`Ctrl`+`Shift`+`I`
+
 # start script example
 
 `~/bin/thought-logger`:

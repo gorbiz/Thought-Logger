@@ -3,14 +3,14 @@
   "name": "thought-logger",
   "icons": [
       {
-          "src": "icon/lowres.webp",
+          "src": "icon/48.png",
           "sizes": "48x48",
-          "type": "image/webp"
+          "type": "image/png"
       },
       {
-          "src": "icon/hd_hi.webp",
+          "src": "icon/192.png",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/png"
       }
   ],
   "start_url": "/index.html?source=pwa",

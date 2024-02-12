@@ -1,48 +1,18 @@
-const cacheName = 'thought-logger-v1'
-const staticAssets = [
-    './',
-    './index.html',
-    './logger.js',
-    './style.css', // If you have external CSS
-    './icon/lowres.webp',
-    './icon/hd_hi.webp',
-]
-
-self.addEventListener('install', async e => {
-    const cache = await caches.open(cacheName)
-    await cache.addAll(staticAssets)
-    return self.skipWaiting()
+self.addEventListener('install', function (event) {
+  // Skip waiting to activate this service worker immediately without waiting for the next reload.
+  self.skipWaiting()
 })
 
-self.addEventListener('activate', e => {
-    self.clients.claim()
+self.addEventListener('activate', function (event) {
+  // Claim clients immediately to control any open clients without waiting for them to reload.
+  event.waitUntil(self.clients.claim())
 })
 
-self.addEventListener('fetch', async e => {
-    const req = e.request
-    const url = new URL(req.url)
-
-    if (url.origin === location.origin) {
-        e.respondWith(cacheFirst(req))
-    } else {
-        e.respondWith(networkAndCache(req))
-    }
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    fetch(event.request).catch(function () {
+      // Attempt to fetch from the network, and fall back to the cache only if the network fails.
+      return caches.match(event.request)
+    })
+  )
 })
-
-async function cacheFirst(req) {
-    const cache = await caches.open(cacheName)
-    const cached = await cache.match(req)
-    return cached || fetch(req)
-}
-
-async function networkAndCache(req) {
-    const cache = await caches.open(cacheName)
-    try {
-        const fresh = await fetch(req)
-        await cache.put(req, fresh.clone())
-        return fresh
-    } catch (e) {
-        const cached = await cache.match(req)
-        return cached
-    }
-}

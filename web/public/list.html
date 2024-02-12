@@ -3,9 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>thought-logger</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+  </style>
 </head>
 <body>
-  TODO fetch list of logs...
+  <h1 data-id="bucket-id">[[ bucket ]]</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>created</th>
+        <th>message</th>
+      </tr>
+    </thead>
+    <tbody data-id="log-list">
+      <tr>
+        <td>1</td>
+        <td>hello</td>
+        <td>2020-01-01</td>
+      </tr>
+    </tbody>
+  </table>
+  <script src="logger.js"></script>
+  <script>
+    async function main () {
+        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+        const bucketEl = document.querySelector('[data-id="bucket-id"]')
+        bucketEl.textContent = bucketId
+
+        const logs = await getLogsFromBucket(bucketId)
+        console.log(logs)
+
+        const logListEl = document.querySelector('[data-id="log-list"]')
+        logListEl.innerHTML = logs.reverse().map(log => {
+          return `
+            <tr>
+              <td>${log.id}</td>
+              <td>${log.created}</td>
+              <td>${log.text}</td>
+            </tr>
+          `
+        }).join('')
+      }
+      main()
+  </script>
 </body>
 </html>

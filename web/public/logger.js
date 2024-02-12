@@ -70,3 +70,21 @@ function syncLocalLogs(bucketId) {
     });
   });
 }
+
+async function getLogsFromBucket (bucketId) {
+  const baseUrl = '' // TODO override possible
+  const url = `${baseUrl}/b/${bucketId}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    // console.log('Logs received:', data);
+    return data.data;
+    // TODO use the logs as needed
+  } catch (error) {
+    console.error('Failed to get logs', error);
+  }
+}

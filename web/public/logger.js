@@ -88,3 +88,5 @@ async function getLogsFromBucket (bucketId) {
     console.error('Failed to get logs', error);
   }
 }
+
+export { sendLogToBucket, getLogsFromBucket }

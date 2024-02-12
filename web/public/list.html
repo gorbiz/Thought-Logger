@@ -72,8 +72,8 @@
       </tr>
     </tbody>
   </table>
-  <script src="logger.js"></script>
-  <script>
+  <script type="module">
+    import { getLogsFromBucket } from './logger.js'
     async function main () {
         const bucketId = localStorage.getItem('bucketId') || 'thoughts'
         const bucketEl = document.querySelector('[data-id="bucket-id"]')

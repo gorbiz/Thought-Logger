@@ -62,8 +62,8 @@
 <body>
     <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
 
-    <script src="logger.js"></script>
-    <script>
+    <script type="module">
+        import { sendLogToBucket } from './logger.js'
         const bucketId = localStorage.getItem('bucketId') || 'thoughts'
         document.getElementById('logText').addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {

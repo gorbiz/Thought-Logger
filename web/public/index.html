@@ -1,60 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thought Logger</title>
-  <link rel="manifest" href="/manifest.json">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thought Logger</title>
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        :root {
+            --background-color: #1e1e1e;
+            --text-color: #c5c6c7;
+            --textarea-bg-color: #2d2d2d;
+            --textarea-border-color: #444;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-size: 18px;
+        }
 
-    textarea {
-      width: 100%;
-      height: 100px;
-      margin-bottom: 10px;
-    }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+        }
 
-    form {
-      max-width: 500px;
-      margin: auto;
-    }
-  </style>
+        textarea {
+            width: 100%;
+            height: 100%;
+            background-color: var(--textarea-bg-color);
+            border: none;
+            color: var(--text-color);
+            resize: none;
+            padding: 20px;
+            box-sizing: border-box;
+            font-size: var(--font-size);
+            border: 1px solid var(--textarea-border-color);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #565656;
+        }
+
+        /* Removes scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Ensure textarea is fullscreen and no scrollbars are visible */
+        textarea {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
 </head>
-
 <body>
-  <form id="logForm">
-    <label for="logText">Log Text:</label>
-    <textarea id="logText" name="logText" required>cogito</textarea>
-  </form>
+    <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
 
-  <script src="logger.js"></script>
-  <script>
-    const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-    document.getElementById('logText').addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
-        event.preventDefault()
-        const logText = event.target.value
-        const logData = { text: logText }
-        sendLogToBucket(bucketId, logData)
-      }
-    })
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          console.log('SW registered: ', registration)
-        }).catch(registrationError => {
-          console.log('SW registration failed: ', registrationError)
+    <script src="logger.js"></script>
+    <script>
+        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+        document.getElementById('logText').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+                event.preventDefault()
+                const logText = event.target.value
+                const logData = { text: logText }
+                sendLogToBucket(bucketId, logData)
+                event.target.value = '' // Clear textarea after submit
+            }
         })
-      })
-    }
-  </script>
+    </script>
 </body>
-
 </html>

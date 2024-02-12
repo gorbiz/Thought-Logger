@@ -6,41 +6,29 @@
     <title>thought-logger</title>
 </head>
 <body>
-    <h1>Log Sender Example</h1>
     <form id="logForm">
-        <label for="bucketId">Bucket ID:</label>
-        <input type="text" id="bucketId" name="bucketId" value="thoughts" required>
-        <br>
         <label for="logText">Log Text:</label>
         <input type="text" id="logText" name="logText" value="cogito" required>
-        <br>
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location">
-        <br>
-        <label for="device">Device:</label>
-        <input type="text" id="device" name="device">
         <br>
         <button type="submit">Send Log</button>
     </form>
 
     <script src="logger.js"></script>
     <script>
-        // const bucketId = localStorage.getItem('bucketId') || 'thoughts' TODO
+        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
         document.getElementById('logForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const logText = document.getElementById('logText').value;
-            const location = document.getElementById('location').value;
-            const device = document.getElementById('device').value;
+            event.preventDefault()
+            const logText = document.getElementById('logText').value
 
             const logData = {
-                text: logText,
-                location: location,
-                device: device,
-                extra: {} // Add any extra information as needed
-            };
+                text: logText
+                // location: location, // TODO
+                // device: device, // TODO
+                // extra: {} // add any extra information as needed
+            }
 
-            sendLogToBucket(bucketId, logData);
-        });
+            sendLogToBucket(bucketId, logData)
+        })
     </script>
 </body>
 </html>

@@ -1,34 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>thought-logger</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thought Logger</title>
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: auto;
+    }
+  </style>
 </head>
+
 <body>
-    <form id="logForm">
-        <label for="logText">Log Text:</label>
-        <input type="text" id="logText" name="logText" value="cogito" required>
-        <br>
-        <button type="submit">Send Log</button>
-    </form>
+  <form id="logForm">
+    <label for="logText">Log Text:</label>
+    <textarea id="logText" name="logText" required>cogito</textarea>
+  </form>
 
-    <script src="logger.js"></script>
-    <script>
-        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-        document.getElementById('logForm').addEventListener('submit', function(event) {
-            event.preventDefault()
-            const logText = document.getElementById('logText').value
+  <script src="logger.js"></script>
+  <script>
+    const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+    document.getElementById('logText').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+        event.preventDefault()
+        const logText = event.target.value
+        const logData = { text: logText }
+        sendLogToBucket(bucketId, logData)
+      }
+    })
+  </script>
 
-            const logData = {
-                text: logText
-                // location: location, // TODO
-                // device: device, // TODO
-                // extra: {} // add any extra information as needed
-            }
-
-            sendLogToBucket(bucketId, logData)
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('SW registered: ', registration)
+        }).catch(registrationError => {
+          console.log('SW registration failed: ', registrationError)
         })
-    </script>
+      })
+    }
+  </script>
 </body>
+
 </html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thought-logger</title>
+</head>
+<body>
+    <h1>Log Sender Example</h1>
+    <form id="logForm">
+        <label for="bucketId">Bucket ID:</label>
+        <input type="text" id="bucketId" name="bucketId" required>
+        <br>
+        <label for="logText">Log Text:</label>
+        <input type="text" id="logText" name="logText" required>
+        <br>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location">
+        <br>
+        <label for="device">Device:</label>
+        <input type="text" id="device" name="device">
+        <br>
+        <button type="submit">Send Log</button>
+    </form>
+
+    <script src="lib/logger.js"></script>
+    <script>
+        document.getElementById('logForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const bucketId = document.getElementById('bucketId').value;
+            const logText = document.getElementById('logText').value;
+            const location = document.getElementById('location').value;
+            const device = document.getElementById('device').value;
+
+            const logData = {
+                text: logText,
+                location: location,
+                device: device,
+                extra: {} // Add any extra information as needed
+            };
+
+            sendLogToBucket(bucketId, logData);
+        });
+    </script>
+</body>
+</html>

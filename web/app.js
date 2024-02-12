@@ -35,10 +35,9 @@ const initDb = (bucketId) => {
   return db
 }
 
-// staticly serve ../web
-app.use(express.static(path.join(__dirname, '../web')))
+app.use(express.static(path.join(__dirname, './public')))
 
-app.post('/buckets/:bucketId/logs', (req, res) => {
+app.post('/b/:bucketId', (req, res) => { // b as in bucket
   const bucketId = req.params.bucketId
   const { text, location, device, extra } = req.body
   const db = initDb(bucketId)
@@ -52,7 +51,7 @@ app.post('/buckets/:bucketId/logs', (req, res) => {
   })
 })
 
-app.get('/buckets/:bucketId/logs', (req, res) => {
+app.get('/b/:bucketId', (req, res) => {
   const bucketId = req.params.bucketId
   const db = initDb(bucketId)
 

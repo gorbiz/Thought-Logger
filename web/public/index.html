@@ -9,10 +9,10 @@
     <h1>Log Sender Example</h1>
     <form id="logForm">
         <label for="bucketId">Bucket ID:</label>
-        <input type="text" id="bucketId" name="bucketId" required>
+        <input type="text" id="bucketId" name="bucketId" value="thoughts" required>
         <br>
         <label for="logText">Log Text:</label>
-        <input type="text" id="logText" name="logText" required>
+        <input type="text" id="logText" name="logText" value="cogito" required>
         <br>
         <label for="location">Location:</label>
         <input type="text" id="location" name="location">
@@ -23,11 +23,11 @@
         <button type="submit">Send Log</button>
     </form>
 
-    <script src="lib/logger.js"></script>
+    <script src="logger.js"></script>
     <script>
+        // const bucketId = localStorage.getItem('bucketId') || 'thoughts' TODO
         document.getElementById('logForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const bucketId = document.getElementById('bucketId').value;
             const logText = document.getElementById('logText').value;
             const location = document.getElementById('location').value;
             const device = document.getElementById('device').value;

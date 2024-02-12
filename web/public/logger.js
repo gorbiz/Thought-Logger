@@ -1,6 +1,6 @@
 function sendLogToBucket(bucketId, logData) {
   const baseUrl = '' // TODO override possible
-  const url = `${baseUrl}/buckets/${bucketId}/logs`;
+  const url = `${baseUrl}/b/${bucketId}`;
 
   fetch(url, {
     method: 'POST',
@@ -48,7 +48,7 @@ function syncLocalLogs(bucketId) {
 
   logs.forEach((logData, index) => {
     const baseUrl = '' // TODO override possible
-    fetch(`${baseUrl}/buckets/${bucketId}/logs`, {
+    fetch(`${baseUrl}/b/${bucketId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

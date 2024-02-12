@@ -1,24 +1,31 @@
-```sql
--- JSON in sqlite:
+## nginx config example
+```
+server {
+    server_name my-domain.com;
 
-CREATE TABLE logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    text TEXT,
-    location TEXT,
-    extra TEXT  -- This column will store JSON data
-);
+    root /home/ubuntu/app/public; # Define root for static files
 
-INSERT INTO logs (text, location, extra) VALUES
-('Sample log entry', 'Göteborg', '{"tags": ["personal", "ideas"], "device": "laptop"}');
+    # Try to serve static files directly, then proxy if not found
+    location / {
+        try_files $uri $uri/ @proxy;
+        auth_basic off;
+        add_header Access-Control-Allow-Origin *;
+    }
 
+    # Proxy location
+    location @proxy {
+        auth_basic "Restricted Content";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_pass http://localhost:31337;
+    }
 
-SELECT * FROM logs
-WHERE json_extract(extra, '$.tags') LIKE '%personal%';
-
-
-UPDATE logs
-SET extra = json_set(extra, '$.device', 'mobile')
-WHERE id = 1;
-
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/my-domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/my-domain.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
 ```

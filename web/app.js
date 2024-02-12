@@ -35,7 +35,11 @@ const initDb = (bucketId) => {
   return db
 }
 
-app.use(express.static(path.join(__dirname, './public')))
+app.use(express.static(path.join(__dirname, './public'))) // TODO move to nginx config?
+
+app.get('/list', (req, res) => { // /list --> list.html
+  res.sendFile(path.join(__dirname, './public/list.html')) // ...what no, bucket must be in the URL!!
+})
 
 app.post('/b/:bucketId', (req, res) => { // b as in bucket
   const bucketId = req.params.bucketId

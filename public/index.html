@@ -28,7 +28,7 @@
       padding: 0;
       height: 100%;
       background-color: var(--background-color);
-      color: var(--text-color);
+      /* color: var(--text-color); */
       font-family: var(--font-family);
     }
 
@@ -63,6 +63,39 @@
       /* Firefox */
     }
   </style>
+
+  <style>
+    /* note listing */
+    #notes .grid {
+      /* display: flex; */
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 2px;
+    }
+    .note {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      border-radius: 2px;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      /* border: 1px solid rgba(255, 255, 255, 0.2); */
+    }
+    .note-text {
+      word-wrap: break-word;
+    }
+    .note-date {
+      opacity: 0.5;
+      font-size: 10px;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .note {
+        width: calc(100% - 16px);
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -70,7 +103,7 @@
     <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
 
     <script type="module">
-      import { sendLogToBucket } from './logger.js'
+      import { sendLogToBucket, getLogsFromBucket } from './logger.js'
       const bucketId = localStorage.getItem('bucketId') || 'thoughts'
       document.getElementById('logText').addEventListener('keydown', function (event) {
         if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
@@ -79,42 +112,125 @@
           const logData = { text: logText }
           sendLogToBucket(bucketId, logData)
           event.target.value = '' // Clear textarea after submit
+          const detail = { ...logData, bucketId, created: new Date().toISOString() } // FIXME created hacked into place (& id is missing)
+          const customEvent = new CustomEvent('new-log', { detail })
+          document.dispatchEvent(customEvent)
         }
       })
+
+
+      function renderLog(log) {
+        return `
+          <div class="note">
+            <span class="note-text">${log.text}</span>
+            <span class="note-date">${log.created.replace('T', ' ').split('.')[0].slice(0, -3)}</span>
+          </div>`
+      }
+
+      async function renderLogList(logs) {
+        const noteListEl = document.querySelector('#note-list')
+        const sortedLogs = logs.sort((a, b) => new Date(a.created) - new Date(b.created)).reverse()
+        noteListEl.innerHTML = sortedLogs.map(renderLog).join('')
+      }
+  
+      async function main() {
+        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+        const logs = await getLogsFromBucket(bucketId)
+        renderLogList(logs)
+        document.addEventListener('new-log', function (event) {
+          const noteListEl = document.querySelector('#note-list')
+          const newLog = event.detail
+          noteListEl.innerHTML = renderLog(newLog) + noteListEl.innerHTML
+        })
+      }
+
+      main()
     </script>
   </section>
   
-  <section id="table">
-    <table>
-      <tbody data-id="log-list">
-        <tr>
-          <td>hello</td>
-          <td>2020-01-01</td>
-        </tr>
-      </tbody>
-    </table>
-
+  <section id="notes">
+    <div id="note-list" class="grid"></div>  
+  </section>  
+  
+  <!-- Google Keep view, seemed like a good idea but wasn't -->
+  <!--
+  <section id="keep-view" class="list-view" style="display: none;">
+    <div id="note-list" class="grid"></div>
+  
     <script type="module">
       import { getLogsFromBucket } from './logger.js'
-      async function main () {
-          const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+  
+      async function main() {
+        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+        const logs = await getLogsFromBucket(bucketId)
+        console.log(logs)
+  
+        const noteListEl = document.querySelector('#note-list')
+        const sortedLogs = logs.sort((a, b) => new Date(a.created) - new Date(b.created)).reverse()
+        const logsByDate = sortedLogs.reduce((acc, log) => {
+          const logDate = log.created.split(' ')[0] // NOTE split on "T" not " "?
+          console.log(logDate, 'logDate')
+          if (!acc[logDate]) {
+            acc[logDate] = []
+          }
+          acc[logDate].push(log)
+          return acc
+        }, {})
+  
+        console.log(logsByDate, 'logs')
 
-          const logs = await getLogsFromBucket(bucketId)
-          console.log(logs)
-
-          const logListEl = document.querySelector('[data-id="log-list"]')
-          logListEl.innerHTML = logs.reverse().map(log => {
-            return `
-              <tr>
-                <td>${log.created}</td>
-                <td>${log.text}</td>
-              </tr>
-            `
-          }).join('')
-        }
-        main()
+        noteListEl.innerHTML = Object.entries(logsByDate).map(([date, logs]) => {
+          return `
+            <div class="note">
+              <h4>${date}</h4>
+              <ul>
+                ${logs.map(log => `<li><input type="checkbox" id="item-${log.id}" disabled><label for="item-${log.id}">${log.text}</label></li>`).join('')}
+              </ul>
+            </div>
+          `
+        }).join('')
+      }
+  
+      main()
     </script>
+  
+    <style>
+      #notes .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        padding: 16px;
+      }
+      .note {
+        background-color: #fff176;
+        /* background-color: #333; */
+        /* color: #bbb; */
+        border-radius: 8px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: flex-start;
+        max-height: fit-content;
+        max-width: 350px;
+      }
+      .note h4 {
+        margin-top: 0;
+      }
+      .note ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .note li {
+        margin-bottom: 8px;
+      }
+      .note input[type="checkbox"] {
+        margin-right: 8px;
+      }
+    </style>
   </section>
+  -->
 </body>
 
 </html>

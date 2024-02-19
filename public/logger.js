@@ -89,4 +89,22 @@ async function getLogsFromBucket (bucketId) {
   }
 }
 
-export { sendLogToBucket, getLogsFromBucket }
+async function removeLog (bucketId, { id }) {
+  const baseUrl = '' // TODO override possible
+  const url = `${baseUrl}b/${bucketId}/${id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    console.log('Log archived successfully');
+  } catch (error) {
+    console.error('Failed to archive log', error);
+  }
+
+}
+
+export { sendLogToBucket, getLogsFromBucket, removeLog }

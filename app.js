@@ -51,6 +51,20 @@ router.post('/b/:bucketId', (req, res) => {
   })
 })
 
+// Route to delete a log from a specific bucket
+router.delete('/b/:bucketId/:logId', (req, res) => {
+  const { bucketId, logId } = req.params
+  const db = initDb(bucketId)
+
+  console.log('Deleting log')
+  console.log(logId)
+
+  db.run('DELETE FROM logs WHERE id = ?', [logId], function (err) {
+    if (err) return res.status(400).json({ "error": err.message })
+    res.json({ "message": "Log entry deleted" })
+  })
+})
+
 // Route to get logs from a specific bucket
 router.get('/b/:bucketId', (req, res) => {
   const { bucketId } = req.params

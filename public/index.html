@@ -1,79 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="icon" type="image/png" sizes="32x32" href="icon/32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="icon/96.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="icon/128.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon/180.png">
-    <link rel="manifest" href="manifest.json">
-    <title>thought-logger</title>
-    <style>
-        :root {
-            --background-color: #1e1e1e;
-            --text-color: #c5c6c7;
-            --textarea-bg-color: #2d2d2d;
-            --textarea-border-color: #444;
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-size: 18px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon/32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="icon/96.png">
+  <link rel="icon" type="image/png" sizes="128x128" href="icon/128.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon/180.png">
+  <link rel="manifest" href="manifest.json">
+  <title>thought-logger</title>
+  <style>
+    :root {
+      --background-color: #1e1e1e;
+      --text-color: #c5c6c7;
+      --textarea-bg-color: #2d2d2d;
+      --textarea-border-color: #444;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-size: 18px;
+    }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: var(--font-family);
-        }
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+    }
 
-        textarea {
-            width: 100%;
-            height: 100%;
-            background-color: var(--textarea-bg-color);
-            border: none;
-            color: var(--text-color);
-            resize: none;
-            padding: 20px;
-            box-sizing: border-box;
-            font-size: var(--font-size);
-            border: 1px solid var(--textarea-border-color);
-        }
+    textarea {
+      width: 100%;
+      height: 100%;
+      background-color: var(--textarea-bg-color);
+      border: none;
+      color: var(--text-color);
+      resize: none;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: var(--font-size);
+      border: 1px solid var(--textarea-border-color);
+    }
 
-        textarea:focus {
-            outline: none;
-            border-color: #565656;
-        }
+    textarea:focus {
+      outline: none;
+      border-color: #565656;
+    }
 
-        /* Removes scrollbar for webkit browsers */
-        ::-webkit-scrollbar {
-            display: none;
-        }
+    /* Removes scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      display: none;
+    }
 
-        /* Ensure textarea is fullscreen and no scrollbars are visible */
-        textarea {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-    </style>
+    /* Ensure textarea is fullscreen and no scrollbars are visible */
+    textarea {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+  </style>
 </head>
-<body>
-    <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
 
-    <script type="module">
-        import { sendLogToBucket } from './logger.js'
-        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-        document.getElementById('logText').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
-                event.preventDefault()
-                const logText = event.target.value
-                const logData = { text: logText }
-                sendLogToBucket(bucketId, logData)
-                event.target.value = '' // Clear textarea after submit
-            }
-        })
-    </script>
+<body>
+  <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
+
+  <script type="module">
+    import { sendLogToBucket } from './logger.js'
+    const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+    document.getElementById('logText').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+        event.preventDefault()
+        const logText = event.target.value
+        const logData = { text: logText }
+        sendLogToBucket(bucketId, logData)
+        event.target.value = '' // Clear textarea after submit
+      }
+    })
+  </script>
 </body>
+
 </html>

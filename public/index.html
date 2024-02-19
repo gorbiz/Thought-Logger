@@ -18,7 +18,7 @@
       --text-color: #c5c6c7;
       --textarea-bg-color: #2d2d2d;
       --textarea-border-color: #444;
-      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* FIXME */
       --font-size: 18px;
     }
 
@@ -65,6 +65,8 @@
   </style>
 
   <style>
+    .hidden { display: none; }
+
     /* note listing */
     #notes .grid {
       /* display: flex; */
@@ -73,7 +75,7 @@
       padding: 2px;
     }
     .note {
-      background-color: rgba(255, 255, 255, 0.05);
+      /* background-color: rgba(0, 0, 0, 0.25); */
       color: var(--text-color);
       border-radius: 2px;
       padding: 8px;
@@ -95,14 +97,28 @@
         width: calc(100% - 16px);
       }
     }
+    #toggle-list {
+      color: #aaa;
+      cursor: pointer;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px;
+      font-size: 20px;
+      opacity: 0.25;
+    }
   </style>
 </head>
 
 <body>
   <section id="input">
     <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
+    <div id="toggle-list">Toggle list</div>
 
     <script type="module">
+      
+      // saving logs to a bucket
       import { sendLogToBucket, getLogsFromBucket } from './logger.js'
       const bucketId = localStorage.getItem('bucketId') || 'thoughts'
       document.getElementById('logText').addEventListener('keydown', function (event) {
@@ -117,8 +133,8 @@
           document.dispatchEvent(customEvent)
         }
       })
-
-
+      
+      // rendering logs
       function renderLog(log) {
         return `
           <div class="note">
@@ -148,7 +164,7 @@
     </script>
   </section>
   
-  <section id="notes">
+  <section id="notes" class="hidden">
     <div id="note-list" class="grid"></div>  
   </section>  
   
@@ -231,6 +247,20 @@
     </style>
   </section>
   -->
+
+  <script>
+    // toggle list view
+    const toggleListEl = document.getElementById('toggle-list')
+    const notesEl = document.getElementById('notes')
+    toggleListEl.addEventListener('click', function () {
+      // window.localStorage.setItem('bucketId', bucketId)
+      const hidden = notesEl.classList.toggle('hidden')
+      if (hidden) window.localStorage.removeItem('logger-show-list')
+      else window.localStorage.setItem('logger-show-list', 1)
+    })
+    const showList = window.localStorage.getItem('logger-show-list')
+    notesEl.classList.toggle('hidden', !showList)
+  </script>
 </body>
 
 </html>

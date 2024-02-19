@@ -1,5 +1,4 @@
-function sendLogToBucket(bucketId, logData) {
-  const baseUrl = '' // TODO override possible
+function sendLogToBucket(bucketId, logData, baseUrl = '') {
   const url = `${baseUrl}b/${bucketId}`;
 
   fetch(url, {

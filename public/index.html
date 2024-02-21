@@ -123,101 +123,104 @@
 </head>
 
 <body>
-  <section id="input">
-    <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
-    <div id="toggle-list">Toggle list</div>
+  <div class="main-content">
+    <section id="input">
+      <textarea id="logText" name="logText" placeholder="Start typing your thoughts..."></textarea>
+      <div id="toggle-list">Toggle list</div>
 
-    <script type="module">
-      
-      // saving logs to a bucket
-      import { sendLogToBucket, getLogsFromBucket, removeLog } from './logger.js'
-      const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-      document.getElementById('logText').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
-          event.preventDefault()
-          const logText = event.target.value
-          const logData = { text: logText }
-          sendLogToBucket(bucketId, logData)
-          event.target.value = '' // Clear textarea after submit
-          const detail = { ...logData, bucketId, created: new Date().toISOString() } // FIXME created hacked into place (& id is missing)
-          const customEvent = new CustomEvent('new-log', { detail })
-          document.dispatchEvent(customEvent)
-        }
-      })
-      
-      // rendering logs
-      function renderLog(log) {
-        return `
-          <div class="note" data-id="${log.id}">
-            <span class="note-text">${log.text}</span>
-            <span class="note-date">${log.created.replace('T', ' ').split('.')[0].slice(0, -3)}</span>
-          </div>`
-      }
-
-      async function renderLogList(logs) {
-        const noteListEl = document.querySelector('#note-list')
-        const sortedLogs = logs.sort((a, b) => new Date(a.created) - new Date(b.created)).reverse()
-        noteListEl.innerHTML = sortedLogs.map(renderLog).join('')
-      }
-  
-      // touch events
-      function touchEvents() {
-        document.querySelectorAll('.note').forEach(note => {
-          let touchstartX = 0
-          let touchendX = 0
-
-          function handleSwipe() {
-            if (touchendX < touchstartX - 75) archiveEntry(note) // Swipe left
-          }
-
-          note.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX
-          })
-
-          note.addEventListener('touchmove', e => {
-            touchendX = e.changedTouches[0].screenX
-          })
-
-          note.addEventListener('touchend', () => handleSwipe())
-        })
-
-        function archiveEntry(note) {
-          note.classList.add('archiving')
-          note.addEventListener('transitionend', function(e) {
-            // Ensure the transitionend event is for the property you're animating (e.g., opacity)
-            if (e.propertyName === 'opacity') {
-              note.remove()
-            }
-          }, { once: true }) // Use the { once: true } option to auto-remove the event listener after it fires
-
-          // perform archive operation
-          const id = note.getAttribute('data-id')
-          removeLog(bucketId, { id })
-        }
-      }
-
-      async function main() {
+      <script type="module">
+        
+        // saving logs to a bucket
+        import { sendLogToBucket, getLogsFromBucket, removeLog } from './logger.js'
         const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-        const logs = await getLogsFromBucket(bucketId)
-        renderLogList(logs)
-
-        touchEvents()
-
-        document.addEventListener('new-log', function (event) {
-          const noteListEl = document.querySelector('#note-list')
-          const newLog = event.detail
-          noteListEl.innerHTML = renderLog(newLog) + noteListEl.innerHTML
+        document.getElementById('logText').addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+            event.preventDefault()
+            const logText = event.target.value
+            const logData = { text: logText }
+            sendLogToBucket(bucketId, logData)
+            event.target.value = '' // Clear textarea after submit
+            const detail = { ...logData, bucketId, created: new Date().toISOString() } // FIXME created hacked into place (& id is missing)
+            const customEvent = new CustomEvent('new-log', { detail })
+            document.dispatchEvent(customEvent)
+          }
         })
-      }
+        
+        // rendering logs
+        function renderLog(log) {
+          return `
+            <div class="note" data-id="${log.id}">
+              <span class="note-text">${log.text}</span>
+              <span class="note-date">${log.created.replace('T', ' ').split('.')[0].slice(0, -3)}</span>
+            </div>`
+        }
 
-      main()
-    </script>
-  </section>
-  
-  <section id="notes" class="hidden">
-    <div id="note-list" class="grid"></div>  
-  </section>  
-  
+        async function renderLogList(logs) {
+          const noteListEl = document.querySelector('#note-list')
+          const sortedLogs = logs.sort((a, b) => new Date(a.created) - new Date(b.created)).reverse()
+          noteListEl.innerHTML = sortedLogs.map(renderLog).join('')
+        }
+    
+        // touch events
+        function touchEvents() {
+          document.querySelectorAll('.note').forEach(note => {
+            let touchstartX = 0
+            let touchendX = 0
+
+            function handleSwipe() {
+              if (touchendX < touchstartX - 75) archiveEntry(note) // Swipe left
+            }
+
+            note.addEventListener('touchstart', e => {
+              touchstartX = e.changedTouches[0].screenX
+            })
+
+            note.addEventListener('touchmove', e => {
+              touchendX = e.changedTouches[0].screenX
+            })
+
+            note.addEventListener('touchend', () => handleSwipe())
+          })
+
+          function archiveEntry(note) {
+            note.classList.add('archiving')
+            note.addEventListener('transitionend', function(e) {
+              // Ensure the transitionend event is for the property you're animating (e.g., opacity)
+              if (e.propertyName === 'opacity') {
+                note.remove()
+              }
+            }, { once: true }) // Use the { once: true } option to auto-remove the event listener after it fires
+
+            // perform archive operation
+            const id = note.getAttribute('data-id')
+            removeLog(bucketId, { id })
+          }
+        }
+
+        async function main() {
+          const bucketId = localStorage.getItem('bucketId') || 'thoughts'
+          const logs = await getLogsFromBucket(bucketId)
+          renderLogList(logs)
+
+          touchEvents()
+
+          document.addEventListener('new-log', function (event) {
+            const noteListEl = document.querySelector('#note-list')
+            const newLog = event.detail
+            noteListEl.innerHTML = renderLog(newLog) + noteListEl.innerHTML
+          })
+        }
+
+        main()
+      </script>
+    </section>
+    
+    <section id="notes" class="hidden">
+      <div id="note-list" class="grid"></div>  
+    </section> 
+
+  </div>
+
   <!-- Google Keep view, seemed like a good idea but wasn't -->
   <!--
   <section id="keep-view" class="list-view" style="display: none;">
@@ -311,6 +314,9 @@
     const showList = window.localStorage.getItem('logger-show-list')
     notesEl.classList.toggle('hidden', !showList)
   </script>
+
+  <edit-panel-component></edit-panel-component>
+  <script src="../edit/EditPanelComponent.js"></script>
 </body>
 
 </html>

@@ -1,8 +1,9 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const sqlite3 = require('sqlite3').verbose()
-const fs = require('fs')
-const path = require('path')
+import express from 'express'
+import bodyParser from 'body-parser'
+import sqlite3 from 'sqlite3'
+import fs from 'fs'
+import path from 'path'
+
 const router = express.Router()
 
 // Ensure the database directory exists
@@ -76,9 +77,9 @@ router.get('/b/:bucketId', (req, res) => {
   })
 })
 
-module.exports = router
+export default router
 
-if (require.main === module) { // If this file is run directly, start standalone server
+if (import.meta.main) { // If this file is run directly, start standalone server
   const app = express()
   const PORT = process.env.PORT || 3333
   app.use('/logger', router)

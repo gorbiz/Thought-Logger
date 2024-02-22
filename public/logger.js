@@ -1,11 +1,17 @@
-function sendLogToBucket(bucketId, logData, baseUrl = '') {
+function sendLogToBucket(bucketId, logData, baseUrl = '', username, password) {
   const url = `${baseUrl}b/${bucketId}`;
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+
+  if (username && password) {
+    const basicAuth = btoa(`${username}:${password}`)
+    headers['Authorization'] = `Basic ${basicAuth}`
+  }
 
   fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(logData),
   })
   .then(response => {

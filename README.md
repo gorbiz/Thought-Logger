@@ -1,3 +1,5 @@
+The old but much nicer packaged project: https://github.com/gorbiz/thought-logger-original ...it even has a YouTube video!
+
 ## nginx config example
 ```
 server {

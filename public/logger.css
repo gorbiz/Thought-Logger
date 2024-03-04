@@ -1,0 +1,109 @@
+:root {
+  --background-color: #1e1e1e;
+  --text-color: #c5c6c7;
+  --textarea-bg-color: #2d2d2d;
+  --textarea-border-color: #444;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* FIXME */
+  --font-size: 18px;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--background-color);
+  /* color: var(--text-color); */
+  font-family: var(--font-family);
+}
+
+textarea {
+  width: 100%;
+  /* height: 100%; */
+  background-color: var(--textarea-bg-color);
+  border: none;
+  color: var(--text-color);
+  resize: none;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: var(--font-size);
+  border: 1px solid var(--textarea-border-color);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #565656;
+}
+
+/* Removes scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure textarea is fullscreen and no scrollbars are visible */
+textarea {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+</style>
+
+<style>
+.hidden { display: none; }
+
+/* note listing */
+#notes .grid {
+  /* display: flex; */
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 2px;
+}
+.note {
+  /* background-color: rgba(0, 0, 0, 0.25); */
+  color: var(--text-color);
+  border-radius: 2px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  transform: none;
+  opacity: 1;
+  height: auto;
+}
+.note.archiving {
+  /* display: none; */
+  transform: translateX(-100%);
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.note-text { word-wrap: break-word; }
+
+.note-text a {
+  color: deeppink;
+}
+
+.note-date {
+  opacity: 0.5;
+  font-size: 10px;
+  display: block;
+}
+@media (max-width: 600px) {
+  .note {
+    width: calc(100% - 16px);
+  }
+}
+#toggle-list {
+  color: #aaa;
+  cursor: pointer;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  font-size: 20px;
+  opacity: 0.25;
+}

@@ -76,13 +76,14 @@ function syncLocalLogs(bucketId) {
   });
 }
 
-async function getLogsFromBucket (bucketId) {
-  const baseUrl = '' // TODO override possible
+async function getLogsFromBucket (bucketId, baseUrl = '') {
   const url = `${baseUrl}b/${bucketId}`;
 
   try {
     const response = await fetch(url);
     if (!response.ok) {
+      console.log(url, 'url')
+      console.log(response)
       throw new Error('Network response was not ok');
     }
     const data = await response.json();

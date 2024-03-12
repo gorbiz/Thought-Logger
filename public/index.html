@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icon/180.png">
   <link rel="manifest" href="manifest.json">
   <title>thought-logger</title>
-  <link rel="stylesheet" href="logger.css">
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
@@ -49,9 +49,7 @@
   return marked.parse(div.innerHTML)
 }
 
-        
         // rendering logs
-        
         function renderLog(log) {
           return `
             <div class="note" data-id="${log.id}">
@@ -123,88 +121,7 @@
     <section id="notes" class="hidden">
       <div id="note-list" class="grid"></div>  
     </section> 
-
   </div>
-
-  <!-- Google Keep view, seemed like a good idea but wasn't -->
-  <!--
-  <section id="keep-view" class="list-view" style="display: none;">
-    <div id="note-list" class="grid"></div>
-  
-    <script type="module">
-      import { getLogsFromBucket } from './logger.js'
-  
-      async function main() {
-        const bucketId = localStorage.getItem('bucketId') || 'thoughts'
-        const logs = await getLogsFromBucket(bucketId)
-        console.log(logs)
-  
-        const noteListEl = document.querySelector('#note-list')
-        const sortedLogs = logs.sort((a, b) => new Date(a.created) - new Date(b.created)).reverse()
-        const logsByDate = sortedLogs.reduce((acc, log) => {
-          const logDate = log.created.split(' ')[0] // NOTE split on "T" not " "?
-          console.log(logDate, 'logDate')
-          if (!acc[logDate]) {
-            acc[logDate] = []
-          }
-          acc[logDate].push(log)
-          return acc
-        }, {})
-  
-        console.log(logsByDate, 'logs')
-
-        noteListEl.innerHTML = Object.entries(logsByDate).map(([date, logs]) => {
-          return `
-            <div class="note">
-              <h4>${date}</h4>
-              <ul>
-                ${logs.map(log => `<li><input type="checkbox" id="item-${log.id}" disabled><label for="item-${log.id}">${log.text}</label></li>`).join('')}
-              </ul>
-            </div>
-          `
-        }).join('')
-      }
-  
-      main()
-    </script>
-  
-    <style>
-      #notes .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 16px;
-        padding: 16px;
-      }
-      .note {
-        background-color: #fff176;
-        /* background-color: #333; */
-        /* color: #bbb; */
-        border-radius: 8px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        align-items: flex-start;
-        max-height: fit-content;
-        max-width: 350px;
-      }
-      .note h4 {
-        margin-top: 0;
-      }
-      .note ul {
-        list-style: none;
-        padding-left: 0;
-      }
-      .note li {
-        margin-bottom: 8px;
-      }
-      .note input[type="checkbox"] {
-        margin-right: 8px;
-      }
-    </style>
-  </section>
-  -->
 
   <script>
     // toggle list view

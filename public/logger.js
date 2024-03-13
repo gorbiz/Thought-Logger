@@ -1,5 +1,5 @@
-function sendLogToBucket(bucketId, logData, baseUrl = '', username, password) {
-  const url = `${baseUrl}b/${bucketId}`;
+async function sendLogToBucket(bucketId, logData, baseUrl = '', username, password) {
+  const url = `${baseUrl}b/${bucketId}`
   const headers = {
     'Content-Type': 'application/json',
   }
@@ -9,21 +9,23 @@ function sendLogToBucket(bucketId, logData, baseUrl = '', username, password) {
     headers['Authorization'] = `Basic ${basicAuth}`
   }
 
-  fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(logData),
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    console.log('Log sent successfully');
-  })
-  .catch(error => {
-    console.error('Failed to send log, storing locally', error);
-    storeLogLocally(bucketId, logData);
-  });
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(logData),
+    })
+
+    if (!response.ok) throw new Error('Network response was not ok')
+
+    const { id } = await response.json()
+    console.log('Log sent successfully', { id })
+    return { id }
+  } catch (error) {
+    console.error('Failed to send log, storing locally', error)
+    storeLogLocally(bucketId, logData)
+    // Depending on requirements, you might want to rethrow, return undefined, or return a specific error object here
+  }
 }
 
 function storeLogLocally(bucketId, logData) {

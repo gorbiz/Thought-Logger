@@ -52,7 +52,7 @@ router.post('/b/:bucketId', (req, res) => {
 
   db.run('INSERT INTO logs (text, location, device, extra) VALUES (?, ?, ?, ?)', [text, location, device, JSON.stringify(extra)], function (err) {
     if (err) return res.status(400).json({ "error": err.message })
-    res.json({ "message": "Log entry created", "id": this.lastID })
+    res.json({ id: this.lastID })
   })
 })
 
